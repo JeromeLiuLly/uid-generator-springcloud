@@ -152,3 +152,5 @@ public class DmsUidServiceApplicationTests{
 |  throughput  | 6,462,726 | 6,542,259 | 6,077,717 | 6,377,958 | 7,002,410 |6,599,113 |	7,360,934 |6,490,969 |
 
 ![123](https://raw.githubusercontent.com/baidu/uid-generator/master/doc/throughput3.png)
+
+官方地址：[百度uid-generator](https://github.com/baidu/uid-generator)
