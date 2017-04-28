@@ -1,6 +1,6 @@
 # uid-generator-springcould
 百度uid-generator方案改造成springcould
-
+                                                                                                                                                              
 # UidGenerator
 UidGenerator是Java实现的, 基于[Snowflake](https://github.com/twitter/snowflake)算法的唯一ID生成器。UidGenerator以组件形式工作在应用项目中, 
 支持自定义workerId位数和初始化策略, 从而适用于[docker](https://www.docker.com/)等虚拟化环境下实例自动重启、漂移等场景。 
@@ -100,3 +100,53 @@ PRIMARY KEY(ID)
  </pre>
  
  修改application.properties配置中, spring.datasource.url, spring.datasource.username和spring.datasource.password, 确保库地址, 名称, 端口号, 用户名和密码正确.
+ 
+ # 改造后的uid-generator 
+ 改造后的uid-generator不需要做过多的配置信息，基础的sql的基础配置信息和mybatis的xml。
+
+DmsUidServiceApplicationTests.class
+<pre>
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest(classes = DmsUidServiceApplication.class)
+public class DmsUidServiceApplicationTests{
+     //1.cachedUidGenerator
+     //2.defaultUidGenerator
+     @Resource(name="cachedUidGenerator")
+	    private UidGenerator uidGenerator;
+}
+</pre>
+
+根据上述的注解方式，能够实现根据cachedUidGenerator/defaultUidGenerator，实现进行生成uid。
+ 
+ # 关于UID比特分配的建议
+
+对于并发数要求不高、期望长期使用的应用, 可增加timeBits位数, 减少seqBits位数. 例如节点采取用完即弃的WorkerIdAssigner策略, 重启频率为12次/天, 那么配置成<code>{"workerBits":23,"timeBits":31,"seqBits":9}</code>时, 可支持28个节点以整体并发量14400 UID/s的速度持续运行68年.
+
+对于节点重启频率频繁、期望长期使用的应用, 可增加workerBits和timeBits位数, 减少seqBits位数. 例如节点采取用完即弃的WorkerIdAssigner策略, 重启频率为24*12次/天, 那么配置成<code>{"workerBits":27,"timeBits":30,"seqBits":6}</code>时, 可支持37个节点以整体并发量2400 UID/s的速度持续运行 34年.
+
+吞吐量测试
+
+在MacBook Pro（2.7GHz Intel Core i5, 8G DDR3）上进行了CachedUidGenerator（单实例）的UID吞吐量测试. 
+首先固定住workerBits为任选一个值(如20), 分别统计timeBits变化时(如从25至32, 总时长分别对应1年和136年)的吞吐量, 如下表所示:
+
+|   timeBits   |      25      |      26      |       27      |       28      |       29      | 30 | 31 | 32 |
+| ------------ |:------------:|:------------:|:-------------:|:-------------:|:-------------:|:-------------:|:-------------:|:-------------:|
+|  throughput  |   6,831,465  |   7,007,279  |   6,679,625   |   6,499,205   |   6,534,971   |	7,617,440 |	6,186,930 |	6,364,997 |
+![123](https://raw.githubusercontent.com/baidu/uid-generator/master/doc/throughput1.png)
+
+再固定住timeBits为任选一个值(如31), 分别统计workerBits变化时(如从20至29, 总重启次数分别对应1百万和500百万)的吞吐量, 如下表所示:
+
+|   workerBits   |      20      |      21      |       22      |       23      |       24      | 25 | 26 | 27 |
+| ------------ |:------------:|:------------:|:-------------:|:-------------:|:-------------:|:-------------:|:-------------:|:-------------:|
+|  throughput  |   6,186,930  |   6,642,727  |   6,581,661   |   6,462,726   |   6,774,609   |	6,414,906 |	6,806,266 |	6,223,617 |
+![123](https://raw.githubusercontent.com/baidu/uid-generator/master/doc/throughput2.png)
+
+由此可见, 不管如何配置, CachedUidGenerator总能提供600万/s的稳定吞吐量, 只是使用年限会有所减少. 这真的是太棒了.
+
+最后, 固定住workerBits和timeBits位数(如23和31), 分别统计不同数目(如1至8,本机CPU核数为4)的UID使用者情况下的吞吐量,
+
+|   workerBits   |      1      |      2      |       3      |       4      |       5      | 6 | 7 | 8 |
+| ------------ |:------------:|:------------:|:-------------:|:-------------:|:-------------:|:-------------:|:-------------:|:-------------:|
+|  throughput  |   6,462,726  |   6,542,259  |   6,077,717   |   6,377,958  |   7,002,410   |	6,599,113 |	7,360,934 |	6,490,969 |
+
+![123](https://raw.githubusercontent.com/baidu/uid-generator/master/doc/throughput3.png)
