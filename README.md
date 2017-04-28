@@ -10,4 +10,4 @@ UidGenerator是Java实现的, 基于[Snowflake](https://github.com/twitter/snowf
 依赖版本：[Java8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)及以上版本, [MySQL](https://dev.mysql.com/downloads/mysql/)(内置WorkerID分配器, 启动阶段通过DB进行分配; 如自定义实现, 则DB非必选依赖）
 
 # Snowflake算法
-![Collection](/JeromeLiuLly/uid-generator-springcould/master/doc/snowflake.png) 
+![123](https://raw.githubusercontent.com/baidu/uid-generator/master/doc/snowflake.png) 
