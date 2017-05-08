@@ -19,7 +19,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = DmsUidServiceApplication.class)
-//@ContextConfiguration(locations = { "classpath:cached-uid-spring.xml" })
 public class DmsUidServiceApplicationTests {
 
 	 	private static final int SIZE = 7000000; // 700w

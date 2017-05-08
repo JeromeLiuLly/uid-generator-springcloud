@@ -16,13 +16,6 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.candao.dms.uid.impl.DefaultUidGenerator;
-
-/**
- * Test for {@link DefaultUidGenerator}
- * 
- * @author yutianbao
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = DmsUidServiceApplication.class)
 public class DefaultUidGeneratorTest {

@@ -24,9 +24,6 @@ import org.springframework.util.StringUtils;
 
 import com.alibaba.druid.pool.DruidDataSource;
 
-/**
- * Created by liangchong998 on 2016/8/18.
- */
 @Configuration
 @EnableTransactionManagement
 @MapperScan(value = "com.candao.dms.uid")
