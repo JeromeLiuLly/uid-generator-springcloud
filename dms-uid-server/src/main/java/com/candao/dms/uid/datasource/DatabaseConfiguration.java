@@ -34,9 +34,9 @@ public class DatabaseConfiguration implements EnvironmentAware {
 	@Override
 	public void setEnvironment(Environment environment) {
 		this.environment = environment;
-		this.propertyResolver = new RelaxedPropertyResolver(environment, "spring.datasource.");
+		this.propertyResolver = new RelaxedPropertyResolver(environment, "spring.datasource");
 	}
-
+	
 	// 注册dataSource
 	@Bean(destroyMethod = "close")
 	public DruidDataSource dataSource() throws SQLException {
